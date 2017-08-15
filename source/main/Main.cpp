@@ -7,7 +7,6 @@
 
 	#include <iostream>
 	#include "../rendering/Renderer.h"
-	#include "../models/Block.h"
 
 	int main(int argc, char** argv){
 

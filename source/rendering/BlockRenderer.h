@@ -4,6 +4,7 @@
  *  Created on: 13.08.2017
  *      Author: Robin
  */
+#pragma once
 
 #ifndef SOURCE_RENDERING_BLOCKRENDERER_H_
 #define SOURCE_RENDERING_BLOCKRENDERER_H_

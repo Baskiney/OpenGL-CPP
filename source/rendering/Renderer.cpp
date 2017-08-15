@@ -11,7 +11,6 @@
 	#include "Camera.h"
 
 	// C++ native functions
-	#include <iostream>
 	#include <stdlib.h>
 
 	// OpenGL and Helper Libraries
@@ -19,10 +18,6 @@
 	#include <GL/glut.h>
 
 	void __renderScene(void) {
-
-		// Skybox Color
-		// RGBA
-		glClearColor(0.5, 0.7, 1.0, 1.0);
 
 		// Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -37,14 +32,11 @@
 		// Render here... ------------------------------------------------------
 
 
-		glPushMatrix();
-					__renderBlock();
-		glPopMatrix();
+		__renderBlock();
 
 
 
 		// Stop rendering here...? ---------------------------------------------
-
 
 		glutSwapBuffers();
 	}
@@ -74,6 +66,21 @@
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+	void __initRenderers(){
+
+		__initBlockRenderer();
+
+	}
+
+	void initCallbacks(){
+		glutDisplayFunc(__renderScene);
+		glutReshapeFunc(__changeSize);
+		glutIdleFunc(__renderScene);
+		glutSpecialFunc(processSpecialKeys);
+		glutMouseFunc(mouseButton);
+		glutMotionFunc(mouseMove);
+	}
+
 
 	int __start(int argc, char **argv) {
 
@@ -84,17 +91,25 @@
 		glutInitWindowSize(1024,768);
 		glutCreateWindow("OpenGL");
 
+		//Init glew
+	    GLenum res = glewInit();
+	    if (res != GLEW_OK) {
+	      return 1;
+	    }
+
 		// register callbacks
-		glutDisplayFunc(__renderScene);
-		glutReshapeFunc(__changeSize);
-		glutIdleFunc(__renderScene);
-		glutSpecialFunc(processSpecialKeys);
-		glutMouseFunc(mouseButton);
-		glutMotionFunc(mouseMove);
+		initCallbacks();
 
 		// Depth
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
+
+		//Init Renderers
+		__initRenderers();
+
+		//Blue Skybox
+		glClearColor(0.5, 0.7, 1.0, 1.0);
+
 		// enter GLUT event processing cycle
 		glutMainLoop();
 

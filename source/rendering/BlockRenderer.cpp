@@ -9,43 +9,66 @@
 
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GL/glut.h>
+#include "../external/math_3d.h"
 
+GLuint VBO;
+
+void __initBlockRenderer(){
+
+	// Inits vertex Buffer and Polygon Data
+	static const GLfloat vertex[] = {
+	    -1.0f,-1.0f,-1.0f,
+	    -1.0f,-1.0f, 1.0f,
+	    -1.0f, 1.0f, 1.0f,
+	     1.0f, 1.0f,-1.0f,
+	    -1.0f,-1.0f,-1.0f,
+	    -1.0f, 1.0f,-1.0f,
+	     1.0f,-1.0f, 1.0f,
+	    -1.0f,-1.0f,-1.0f,
+	     1.0f,-1.0f,-1.0f,
+	     1.0f, 1.0f,-1.0f,
+	     1.0f,-1.0f,-1.0f,
+	    -1.0f,-1.0f,-1.0f,
+	    -1.0f,-1.0f,-1.0f,
+	    -1.0f, 1.0f, 1.0f,
+	    -1.0f, 1.0f,-1.0f,
+	     1.0f,-1.0f, 1.0f,
+	    -1.0f,-1.0f, 1.0f,
+	    -1.0f,-1.0f,-1.0f,
+	    -1.0f, 1.0f, 1.0f,
+	    -1.0f,-1.0f, 1.0f,
+	     1.0f,-1.0f, 1.0f,
+	     1.0f, 1.0f, 1.0f,
+	     1.0f,-1.0f,-1.0f,
+	     1.0f, 1.0f,-1.0f,
+	     1.0f,-1.0f,-1.0f,
+	     1.0f, 1.0f, 1.0f,
+	     1.0f,-1.0f, 1.0f,
+	     1.0f, 1.0f, 1.0f,
+	     1.0f, 1.0f,-1.0f,
+	    -1.0f, 1.0f,-1.0f,
+	     1.0f, 1.0f, 1.0f,
+	    -1.0f, 1.0f,-1.0f,
+	    -1.0f, 1.0f, 1.0f,
+	     1.0f, 1.0f, 1.0f,
+	    -1.0f, 1.0f, 1.0f,
+	     1.0f,-1.0f, 1.0f
+	};
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// Maybe draws too many, optimize later
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*12*9, &vertex[0], GL_STATIC_DRAW);
+}
 
 void __renderBlock(){
 
-		glColor3f(0,0.6f,0);
-		glBegin(GL_QUADS);
-		    // Front Face
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
-		    // Back Face
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
-		    // Top Face
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
-		    // Bottom Face
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Top Right Of The Texture and Quad
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Top Left Of The Texture and Quad
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
-		    // Right face
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);  // Bottom Right Of The Texture and Quad
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);  // Top Right Of The Texture and Quad
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);  // Top Left Of The Texture and Quad
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);  // Bottom Left Of The Texture and Quad
-		    // Left Face
-		    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom Left Of The Texture and Quad
-		    glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);  // Bottom Right Of The Texture and Quad
-		    glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);  // Top Right Of The Texture and Quad
-		    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);  // Top Left Of The Texture and Quad
-		glEnd();
-
+	glColor3f(0,0.4,0);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	// Maybe draws too many, optimize later
+	glDrawArrays(GL_TRIANGLES, 0, 12*9);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 }
