@@ -12,10 +12,12 @@
 
 	// C++ native functions
 	#include <stdlib.h>
+	#include <stdio.h>
 
 	// OpenGL and Helper Libraries
 	#include <GL/glew.h>
 	#include <GL/glut.h>
+
 
 	void __renderScene(void) {
 
@@ -90,6 +92,9 @@
 		glutInitWindowPosition(100,100);
 		glutInitWindowSize(1024,768);
 		glutCreateWindow("OpenGL");
+
+		// For Wireframe
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Init glew
 	    GLenum res = glewInit();
