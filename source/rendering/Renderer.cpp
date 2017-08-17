@@ -84,6 +84,7 @@
 	}
 
 
+
 	int __start(int argc, char **argv) {
 
 		// init GLUT and create window
@@ -107,7 +108,6 @@
 
 		// Depth
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
 
 		//Init Renderers
 		__initRenderers();
@@ -120,4 +120,6 @@
 
 		return 1;
 	}
+
+
 
