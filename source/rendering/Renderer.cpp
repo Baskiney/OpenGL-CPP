@@ -8,7 +8,6 @@
 	// Headers for other project files
 	#include "Renderer.h"
 	#include "BlockRenderer.h"
-	#include "Camera.h"
 
 	// C++ native functions
 	#include <stdlib.h>
@@ -16,57 +15,26 @@
 
 	// OpenGL and Helper Libraries
 	#include <GL/glew.h>
-	#include <GL/glut.h>
+	#include <GLFW/glfw3.h>
 
+	GLFWwindow* window;
 
 	void __renderScene(void) {
 
-		// Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Reset transformations
-		glLoadIdentity();
-		// Set the camera
-		gluLookAt(	x,    y,  z,
-					x+lx, y+ly,  z+lz,
-					0.0f, 1.0f,  0.0f);
-
-		// Render here... ------------------------------------------------------
 
 
-		__renderBlock();
+			__renderBlock();
 
 
 
-		// Stop rendering here...? ---------------------------------------------
 
-		glutSwapBuffers();
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
-	void __changeSize(int w, int h) {
 
-		// Prevent a divide by zero, when window is too short
-		// (you cant make a window of zero width).
-		if (h == 0)
-			h = 1;
-
-		float ratio =  w * 1.0 / h;
-
-		// Use the Projection Matrix
-		glMatrixMode(GL_PROJECTION);
-
-		// Reset Matrix
-		glLoadIdentity();
-
-		// Set the viewport to be the entire window
-		glViewport(0, 0, w, h);
-
-		// Set the correct perspective.
-		gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-
-		// Get Back to the Modelview
-		glMatrixMode(GL_MODELVIEW);
-	}
 
 	void __initRenderers(){
 
@@ -74,37 +42,32 @@
 
 	}
 
-	void initCallbacks(){
-		glutDisplayFunc(__renderScene);
-		glutReshapeFunc(__changeSize);
-		glutIdleFunc(__renderScene);
-		glutSpecialFunc(processSpecialKeys);
-		glutMouseFunc(mouseButton);
-		glutMotionFunc(mouseMove);
-	}
-
-
 
 	int __start(int argc, char **argv) {
 
-		// init GLUT and create window
-		glutInit(&argc, argv);
-		glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-		glutInitWindowPosition(100,100);
-		glutInitWindowSize(1024,768);
-		glutCreateWindow("OpenGL");
+		if( !glfwInit() ) {
+		    return 1;
+		}
 
-		// For Wireframe
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+		window = glfwCreateWindow( 1024, 768, "OpenGL", NULL, NULL);
+			if( window == NULL ){
+				return 1;
+			}
+		glfwMakeContextCurrent(window);
 
 		//Init glew
-	    GLenum res = glewInit();
-	    if (res != GLEW_OK) {
-	      return 1;
-	    }
+		if (glewInit() != GLEW_OK) {
+				glfwTerminate();
+				return 1;
+			}
 
-		// register callbacks
-		initCallbacks();
+		// Ensure we can capture the escape key being pressed below
+		glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 		// Depth
 		glEnable(GL_DEPTH_TEST);
@@ -117,8 +80,14 @@
 		//Blue Skybox
 		glClearColor(0.5, 0.7, 1.0, 1.0);
 
-		// enter GLUT event processing cycle
-		glutMainLoop();
+		do{
+				__renderScene();
+
+		  } // Check if the ESC key was pressed or the window was closed
+			while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+				   glfwWindowShouldClose(window) == 0 );
+
+		glfwTerminate();
 
 		return 1;
 	}

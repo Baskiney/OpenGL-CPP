@@ -7,14 +7,13 @@
 
 #include "BlockRenderer.h"
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
-#include <GL/glut.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include "../helpers/BMPloader.h"
 #include "shaders/shader.h"
-#include "../external/math_3d.h"
+
 
 
 GLuint VBO;
