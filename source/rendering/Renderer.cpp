@@ -8,7 +8,8 @@
 	// Headers for other project files
 	#include "Renderer.h"
 	#include "BlockRenderer.h"
-	#include "Camera.h"
+	#include "../models/Input.h"
+	#include "../models/Logic.h"
 
 	// C++ native functions
 	#include <stdlib.h>
@@ -16,57 +17,32 @@
 
 	// OpenGL and Helper Libraries
 	#include <GL/glew.h>
-	#include <GL/glut.h>
+	#include <GLFW/glfw3.h>
 
+	GLFWwindow* window;
 
 	void __renderScene(void) {
 
-		// Clear Color and Depth Buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Reset transformations
-		glLoadIdentity();
-		// Set the camera
-		gluLookAt(	x,    y,  z,
-					x+lx, y+ly,  z+lz,
-					0.0f, 1.0f,  0.0f);
-
-		// Render here... ------------------------------------------------------
-
-
-		__renderBlock();
+			//>--Render Inputs
+			computeMatricesFromInputs(window);
+			ProjectionMatrix = getProjectionMatrix();
+			ViewMatrix = getViewMatrix();
+			ModelMatrix = glm::mat4(1.0);
+			MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			//<--Render Inputs
 
 
+			__renderBlock();
 
-		// Stop rendering here...? ---------------------------------------------
 
-		glutSwapBuffers();
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
-	void __changeSize(int w, int h) {
 
-		// Prevent a divide by zero, when window is too short
-		// (you cant make a window of zero width).
-		if (h == 0)
-			h = 1;
-
-		float ratio =  w * 1.0 / h;
-
-		// Use the Projection Matrix
-		glMatrixMode(GL_PROJECTION);
-
-		// Reset Matrix
-		glLoadIdentity();
-
-		// Set the viewport to be the entire window
-		glViewport(0, 0, w, h);
-
-		// Set the correct perspective.
-		gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-
-		// Get Back to the Modelview
-		glMatrixMode(GL_MODELVIEW);
-	}
 
 	void __initRenderers(){
 
@@ -74,42 +50,49 @@
 
 	}
 
-	void initCallbacks(){
-		glutDisplayFunc(__renderScene);
-		glutReshapeFunc(__changeSize);
-		glutIdleFunc(__renderScene);
-		glutSpecialFunc(processSpecialKeys);
-		glutMouseFunc(mouseButton);
-		glutMotionFunc(mouseMove);
-	}
-
-
 
 	int __start(int argc, char **argv) {
 
-		// init GLUT and create window
-		glutInit(&argc, argv);
-		glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-		glutInitWindowPosition(100,100);
-		glutInitWindowSize(1024,768);
-		glutCreateWindow("OpenGL");
+		if( !glfwInit() ) {
+		    return 1;
+		}
 
-		// For Wireframe
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// Anti-Aliasing yay
+		glfwWindowHint(GLFW_SAMPLES, 4);
+
+		//Use new OpenGL COntext
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+		window = glfwCreateWindow( 1024, 768, "Baskicraft Pre-Alpha", NULL, NULL);
+			if( window == NULL ){
+				return 1;
+			}
+		glfwMakeContextCurrent(window);
 
 		//Init glew
-	    GLenum res = glewInit();
-	    if (res != GLEW_OK) {
-	      return 1;
-	    }
+		if (glewInit() != GLEW_OK) {
+				glfwTerminate();
+				return 1;
+			}
 
-		// register callbacks
-		initCallbacks();
+		// Ensure we can capture the escape key being pressed below
+		glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+		// Hide the mouse and enable unlimited mouvement
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+		// Set the mouse at the center of the screen
+		glfwPollEvents();
+		glfwSetCursorPos(window, 1024/2, 768/2);
 
 		// Depth
 		glEnable(GL_DEPTH_TEST);
 		// Accept fragment if it closer to the camera than the former one
 		glDepthFunc(GL_LESS);
+		// Cull Textures not facing camera
+		glEnable(GL_CULL_FACE);
+
 
 		//Init Renderers
 		__initRenderers();
@@ -117,10 +100,16 @@
 		//Blue Skybox
 		glClearColor(0.5, 0.7, 1.0, 1.0);
 
-		// enter GLUT event processing cycle
-		glutMainLoop();
+		do{
+				__renderScene();
 
-		return 1;
+		  } // Check if the ESC key was pressed or the window was closed
+			while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+				   glfwWindowShouldClose(window) == 0 );
+
+		glfwTerminate();
+
+		return 0;
 	}
 
 
