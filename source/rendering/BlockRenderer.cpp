@@ -13,14 +13,13 @@
 #include <iostream>
 #include "../helpers/BMPloader.h"
 #include "shaders/shader.h"
+#include "../models/Logic.h"
 
 
 
 GLuint VBO;
 GLuint UVB;
 GLuint programID;
-GLuint MatrixID;
-glm::mat4 MVP;
 GLuint Texture;
 GLuint TextureID;
 
@@ -35,27 +34,8 @@ void __initBlockRenderer(){
 	// Get a handle for our "MVP" uniform
 	MatrixID = glGetUniformLocation(programID, "MVP");
 
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-
-
-	// Or, for an ortho camera :
-	//glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
-
-	// Camera matrix
-	glm::mat4 View       = glm::lookAt(
-								glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
-								glm::vec3(0,0,0), // and looks at the origin
-								glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-						   );
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model      = glm::mat4(1.0f);
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	MVP        = Projection * View * Model; // Remember, matrix multiplication is the other way around
-
 	// Load the texture using any two methods
 	Texture = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\grassblock\\main.bmp");
-
 	//GLuint Texture = loadDDS("uvtemplate.DDS");
 
 	// Get a handle for our "myTextureSampler" uniform
@@ -161,8 +141,6 @@ void __renderBlock(){
 
 		glUseProgram(programID);
 
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
 		// Set our "myTextureSampler" sampler to use Texture Unit 0
@@ -190,6 +168,7 @@ void __renderBlock(){
 		    (void*)0                     // array buffer offset
 		);
 
+		glDrawArrays(GL_TRIANGLES, 0, 12*3);
 		glDrawArrays(GL_TRIANGLES, 0, 12*3);
 
 		glDisableVertexAttribArray(0);

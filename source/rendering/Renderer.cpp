@@ -8,6 +8,8 @@
 	// Headers for other project files
 	#include "Renderer.h"
 	#include "BlockRenderer.h"
+	#include "../models/Input.h"
+	#include "../models/Logic.h"
 
 	// C++ native functions
 	#include <stdlib.h>
@@ -23,11 +25,17 @@
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			//>--Render Inputs
+			computeMatricesFromInputs(window);
+			ProjectionMatrix = getProjectionMatrix();
+			ViewMatrix = getViewMatrix();
+			ModelMatrix = glm::mat4(1.0);
+			MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+			//<--Render Inputs
 
 
 			__renderBlock();
-
-
 
 
 		glfwSwapBuffers(window);
@@ -49,12 +57,15 @@
 		    return 1;
 		}
 
+		// Anti-Aliasing yay
 		glfwWindowHint(GLFW_SAMPLES, 4);
+
+		//Use new OpenGL COntext
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		window = glfwCreateWindow( 1024, 768, "OpenGL", NULL, NULL);
+		window = glfwCreateWindow( 1024, 768, "Baskicraft Pre-Alpha", NULL, NULL);
 			if( window == NULL ){
 				return 1;
 			}
@@ -68,11 +79,20 @@
 
 		// Ensure we can capture the escape key being pressed below
 		glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+		// Hide the mouse and enable unlimited mouvement
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+		// Set the mouse at the center of the screen
+		glfwPollEvents();
+		glfwSetCursorPos(window, 1024/2, 768/2);
 
 		// Depth
 		glEnable(GL_DEPTH_TEST);
 		// Accept fragment if it closer to the camera than the former one
 		glDepthFunc(GL_LESS);
+		// Cull Textures not facing camera
+		glEnable(GL_CULL_FACE);
+
 
 		//Init Renderers
 		__initRenderers();
@@ -89,7 +109,7 @@
 
 		glfwTerminate();
 
-		return 1;
+		return 0;
 	}
 
 
