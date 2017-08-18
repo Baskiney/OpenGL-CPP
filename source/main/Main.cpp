@@ -11,7 +11,7 @@
 	int main(int argc, char** argv){
 
 		//For Debug
-		std::cout << "Build Complete!" << std::endl;
+		std::cout << "Program started!" << std::endl;
 		__start(argc,argv);
 
 	}
