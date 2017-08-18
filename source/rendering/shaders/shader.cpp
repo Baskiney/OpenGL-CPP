@@ -21,17 +21,27 @@ GLuint LoadShaders(){
 	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode = R"glsl(
 
-		#version 330 core
-		layout (location = 0) in vec3 aPos;   // the position variable has attribute position 0
-		layout (location = 1) in vec3 aColor; // the color variable has attribute position 1
-		  
-		out vec3 ourColor; // output a color to the fragment shader
-		
-		void main()
-		{
-			gl_Position = vec4(aPos, 1.0);
-			ourColor = aColor; // set ourColor to the input color we got from the vertex data
-		} 
+	
+				#version 330 core
+
+				// Input vertex data, different for all executions of this shader.
+				layout(location = 0) in vec3 vertexPosition_modelspace;
+				layout(location = 1) in vec2 vertexUV;
+				
+				// Output data ; will be interpolated for each fragment.
+				out vec2 UV;
+				
+				// Values that stay constant for the whole mesh.
+				uniform mat4 MVP;
+				
+				void main(){
+				
+					// Output position of the vertex, in clip space : MVP * position
+					gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
+					
+					// UV of the vertex. No special space for this one.
+					UV = vertexUV;
+				}
 
 			)glsl";
 
@@ -40,14 +50,22 @@ GLuint LoadShaders(){
 	// Read the Fragment Shader code from the file
 	std::string FragmentShaderCode= R"glsl(
 
-		#version 330 core
-		out vec4 FragColor;  
-		in vec3 ourColor;
-		  
-		void main()
-		{
-			FragColor = vec4(ourColor, 1.0);
-		}
+				#version 330 core
+				
+				// Interpolated values from the vertex shaders
+				in vec2 UV;
+				
+				// Ouput data
+				out vec3 color;
+				
+				// Values that stay constant for the whole mesh.
+				uniform sampler2D myTextureSampler;
+				
+				void main(){
+				
+					// Output color = color of the texture at the specified UV
+					color = texture( myTextureSampler, UV ).rgb;
+				}
 
 			)glsl";
 
