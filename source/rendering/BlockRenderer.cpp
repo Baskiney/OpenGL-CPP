@@ -12,8 +12,8 @@
 
 #include <iostream>
 #include "../helpers/BMPloader.h"
-#include "shaders/shader.h"
 #include "../models/Logic.h"
+#include "shaders/Shader.h"
 
 
 
@@ -30,9 +30,6 @@ void __initBlockRenderer(){
 	glBindVertexArray(VertexArrayID);
 
 	programID = LoadShaders();
-
-	// Get a handle for our "MVP" uniform
-	MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Load the texture using any two methods
 	Texture = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\grassblock\\main.bmp");
@@ -135,9 +132,56 @@ void __initBlockRenderer(){
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
 
 
+
+	//Worldspace translation multiple Blocks
+	//References Shaders later on
+
+	glm::vec3 translations[Blocksize];
+	int index = 0;
+	for(int i = 0; i < Blocksize/3; i += 2)
+	{
+		glm::vec3 translation;
+		translation.x = 0;
+		translation.y = i;
+		translation.z = 0;
+		translations[index++] = translation;
+	}
+	for(int i = 0; i < Blocksize/3; i += 2)
+	{
+		glm::vec3 translation;
+		translation.x = i;
+		translation.y = 0;
+		translation.z = 0;
+		translations[index++] = translation;
+	}
+	for(int i = 0; i < Blocksize/3; i += 2)
+	{
+		glm::vec3 translation;
+		translation.x = 0;
+		translation.y = 0;
+		translation.z = i;
+		translations[index++] = translation;
+	}
+
+	unsigned int instanceVBO;
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(translations), &translations[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	//3d Attribute Pointer
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(2, 1);
+
+	// End Instanced Rendering
+
+
 }
 
-void __renderBlock(){
+void __renderBlocks(){
 
 		glUseProgram(programID);
 
@@ -168,9 +212,15 @@ void __renderBlock(){
 		    (void*)0                     // array buffer offset
 		);
 
-		glDrawArrays(GL_TRIANGLES, 0, 12*3);
-		glDrawArrays(GL_TRIANGLES, 0, 12*3);
+
+		// Instances
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 12*3, Blocksize);
+
+
+		// End-Instances
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+
+
 }

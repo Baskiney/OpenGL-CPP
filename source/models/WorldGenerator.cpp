@@ -6,5 +6,9 @@
  */
 
 #include "WorldGenerator.h"
+#include "../models/Logic.h"
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <iostream>
 
 

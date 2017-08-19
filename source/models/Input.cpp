@@ -30,7 +30,7 @@ float horizontalAngle = 3.14f;
 float verticalAngle = 0.0f;
 
 
-float initialFoV = 60.0f;
+float initialFoV = 70.0f;
 
 float speed = 6.0f;
 float mouseSpeed = 0.0025f;

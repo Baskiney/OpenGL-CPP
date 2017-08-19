@@ -29,14 +29,13 @@
 			computeMatricesFromInputs(window);
 			ProjectionMatrix = getProjectionMatrix();
 			ViewMatrix = getViewMatrix();
-			ModelMatrix = glm::mat4(1.0);
+			ModelMatrix = glm::mat4( 1.0f );
 			MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 			glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 			//<--Render Inputs
 
 
-			__renderBlock();
-
+			__renderBlocks();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -100,6 +99,8 @@
 		//Blue Skybox
 		glClearColor(0.5, 0.7, 1.0, 1.0);
 
+
+		//Render loop
 		do{
 				__renderScene();
 

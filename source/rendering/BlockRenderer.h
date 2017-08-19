@@ -10,7 +10,7 @@
 #ifndef SOURCE_RENDERING_BLOCKRENDERER_H_
 #define SOURCE_RENDERING_BLOCKRENDERER_H_
 
-void __renderBlock();
+void __renderBlocks();
 void __initBlockRenderer();
 
 #endif /* SOURCE_RENDERING_BLOCKRENDERER_H_ */
