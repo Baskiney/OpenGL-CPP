@@ -20,6 +20,6 @@ static glm::mat4 MVP;
 
 
 //World MAP
-static int Blocksize = 60;
+static int Blocksize = 4096;
 
 #endif /* SOURCE_MODELS_LOGIC_H_ */

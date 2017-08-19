@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "../helpers/BMPloader.h"
+#include "../models/World.h"
 #include "../models/Logic.h"
 #include "shaders/Shader.h"
 
@@ -22,6 +23,7 @@ GLuint UVB;
 GLuint programID;
 GLuint Texture;
 GLuint TextureID;
+
 
 void __initBlockRenderer(){
 
@@ -136,31 +138,20 @@ void __initBlockRenderer(){
 	//Worldspace translation multiple Blocks
 	//References Shaders later on
 
+	// TODO Outsource to external available logic
 	glm::vec3 translations[Blocksize];
 	int index = 0;
-	for(int i = 0; i < Blocksize/3; i += 2)
+	for(int i = 0; i < 100; i += 2)
 	{
-		glm::vec3 translation;
-		translation.x = 0;
-		translation.y = i;
-		translation.z = 0;
-		translations[index++] = translation;
-	}
-	for(int i = 0; i < Blocksize/3; i += 2)
-	{
-		glm::vec3 translation;
-		translation.x = i;
-		translation.y = 0;
-		translation.z = 0;
-		translations[index++] = translation;
-	}
-	for(int i = 0; i < Blocksize/3; i += 2)
-	{
-		glm::vec3 translation;
-		translation.x = 0;
-		translation.y = 0;
-		translation.z = i;
-		translations[index++] = translation;
+		for(int j = 0; j < 100; j += 2)
+		{
+			glm::vec3 translation;
+			translation.x = j;
+			translation.y = 0;
+			translation.z = -i;
+			translations[index++] = translation;
+		}
+
 	}
 
 	unsigned int instanceVBO;

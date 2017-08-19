@@ -10,6 +10,7 @@
 	#include "BlockRenderer.h"
 	#include "../models/Input.h"
 	#include "../models/Logic.h"
+	#include "../models/World.h"
 
 	// C++ native functions
 	#include <stdlib.h>
@@ -95,6 +96,7 @@
 
 		//Init Renderers
 		__initRenderers();
+		//generateMap();
 
 		//Blue Skybox
 		glClearColor(0.5, 0.7, 1.0, 1.0);

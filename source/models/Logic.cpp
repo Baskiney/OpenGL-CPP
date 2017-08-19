@@ -6,5 +6,3 @@
  */
 
 #include "Logic.h"
-
-
