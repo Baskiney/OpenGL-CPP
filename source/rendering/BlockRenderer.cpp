@@ -21,8 +21,10 @@
 GLuint VBO;
 GLuint UVB;
 GLuint programID;
-GLuint Texture;
+GLuint Texture1;
+GLuint Texture2;
 GLuint TextureID;
+
 
 
 void __initBlockRenderer(){
@@ -34,7 +36,8 @@ void __initBlockRenderer(){
 	programID = LoadShaders();
 
 	// Load the texture using any two methods
-	Texture = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\grassblock\\main.bmp");
+	Texture1 = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\grassblock\\main.bmp");
+	Texture2 = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\tree\\bark.bmp");
 	//GLuint Texture = loadDDS("uvtemplate.DDS");
 
 	// Get a handle for our "myTextureSampler" uniform
@@ -135,29 +138,11 @@ void __initBlockRenderer(){
 
 
 
-	//Worldspace translation multiple Blocks
-	//References Shaders later on
-
-	// TODO Outsource to external available logic
-	glm::vec3 translations[Blocksize];
-	int index = 0;
-	for(int i = 0; i < 100; i += 2)
-	{
-		for(int j = 0; j < 100; j += 2)
-		{
-			glm::vec3 translation;
-			translation.x = j;
-			translation.y = 0;
-			translation.z = -i;
-			translations[index++] = translation;
-		}
-
-	}
-
+	//Uses Block Data from Logic/World
 	unsigned int instanceVBO;
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(translations), &translations[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(BlockData), &BlockData[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glEnableVertexAttribArray(2);
@@ -177,7 +162,7 @@ void __renderBlocks(){
 		glUseProgram(programID);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture);
+		glBindTexture(GL_TEXTURE_2D, Texture1);
 		// Set our "myTextureSampler" sampler to use Texture Unit 0
 		glUniform1i(TextureID, 0);
 
@@ -206,7 +191,6 @@ void __renderBlocks(){
 
 		// Instances
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 12*3, Blocksize);
-
 
 		// End-Instances
 

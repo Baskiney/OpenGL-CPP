@@ -65,7 +65,7 @@
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		window = glfwCreateWindow( 1024, 768, "Baskicraft Pre-Alpha", NULL, NULL);
+		window = glfwCreateWindow( 1376, 768, "Robin OpenGL Test", NULL, NULL);
 			if( window == NULL ){
 				return 1;
 			}
@@ -94,9 +94,12 @@
 		glEnable(GL_CULL_FACE);
 
 
-		//Init Renderers
+		//Creates render/game logic
+	    initLogic();
+
+		//Initialises Renderers
 		__initRenderers();
-		//generateMap();
+
 
 		//Blue Skybox
 		glClearColor(0.5, 0.7, 1.0, 1.0);

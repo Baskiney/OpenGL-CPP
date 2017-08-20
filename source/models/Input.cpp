@@ -10,14 +10,14 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
-glm::mat4 ViewMatrix;
-glm::mat4 ProjectionMatrix;
+glm::mat4 InputViewMatrix;
+glm::mat4 InputProjectionMatrix;
 
 glm::mat4 getViewMatrix(){
-	return ViewMatrix;
+	return InputViewMatrix;
 }
 glm::mat4 getProjectionMatrix(){
-	return ProjectionMatrix;
+	return InputProjectionMatrix;
 }
 
 
@@ -30,7 +30,7 @@ float horizontalAngle = 3.14f;
 float verticalAngle = 0.0f;
 
 
-float initialFoV = 70.0f;
+float FoV = 70.0f;
 
 float speed = 6.0f;
 float mouseSpeed = 0.0025f;
@@ -74,10 +74,12 @@ void computeMatricesFromInputs(GLFWwindow* window){
 	// Up vector
 	glm::vec3 up = glm::cross( right, direction );
 
+	//Do something on click
+    // TODO
 
 	//Gotta go fast
 	if (glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS){
-		speed = 35.0f;
+		speed = 60.0f;
 	}
 	if (glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_RELEASE){
 		speed = 10.0f;
@@ -100,12 +102,10 @@ void computeMatricesFromInputs(GLFWwindow* window){
 		position -= right * deltaTime * speed;
 	}
 
-	float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
-
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 200 units
-	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 200.0f);
+	// Projection matrix : 45° Field of View, 16:9 ratio, display range : 0.1 unit <-> 200 units
+	InputProjectionMatrix = glm::perspective(glm::radians(FoV), 16.0f / 9.0f, 0.1f, 200.0f);
 	// Camera matrix
-	ViewMatrix       = glm::lookAt(
+	InputViewMatrix       = glm::lookAt(
 								position,           // Camera is here
 								position+direction, // and looks here : at the same position, plus "direction"
 								up                  // Head is up (set to 0,-1,0 to look upside-down)

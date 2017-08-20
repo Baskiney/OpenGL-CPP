@@ -12,14 +12,16 @@
 #define SOURCE_MODELS_LOGIC_H_
 
 //View Logic -------------
-static GLuint MatrixID;
-static glm::mat4 ProjectionMatrix;
-static glm::mat4 ViewMatrix;
-static glm::mat4 ModelMatrix;
-static glm::mat4 MVP;
+extern GLuint MatrixID;
+extern glm::mat4 ProjectionMatrix;
+extern glm::mat4 ViewMatrix;
+extern glm::mat4 ModelMatrix;
+extern glm::mat4 MVP;
 
 
 //World MAP
-static int Blocksize = 4096;
+extern int Blocksize;
+
+void initLogic();
 
 #endif /* SOURCE_MODELS_LOGIC_H_ */
