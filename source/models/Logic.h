@@ -20,7 +20,7 @@ extern glm::mat4 MVP;
 
 
 //World MAP
-extern int Blocksize;
+extern int chunkSize;
 
 void initLogic();
 

@@ -15,6 +15,7 @@
 	// C++ native functions
 	#include <stdlib.h>
 	#include <stdio.h>
+	#include <iostream>
 
 	// OpenGL and Helper Libraries
 	#include <GL/glew.h>
@@ -37,6 +38,8 @@
 
 
 			__renderBlocks();
+
+			//std::cout << "Test" << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -92,7 +95,6 @@
 		glDepthFunc(GL_LESS);
 		// Cull Textures not facing camera
 		glEnable(GL_CULL_FACE);
-
 
 		//Creates render/game logic
 	    initLogic();

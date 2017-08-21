@@ -12,7 +12,7 @@
 #define SOURCE_MODELS_WORLDGENERATOR_H_
 
 void generateMap();
-void generateTree(int x, int z);
+void generateTree(int x, int z, int y);
 void destroyBlock(int id);
 
 extern glm::vec3 BlockData[10000];

@@ -7,6 +7,7 @@
 
 #include "Input.h"
 #include <GLFW/glfw3.h>
+#include <string>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
@@ -75,7 +76,10 @@ void computeMatricesFromInputs(GLFWwindow* window){
 	glm::vec3 up = glm::cross( right, direction );
 
 	//Do something on click
-    // TODO
+	if (glfwGetMouseButton(window, 0) == GLFW_PRESS){
+		speed = 60.0f;
+	}
+
 
 	//Gotta go fast
 	if (glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS){

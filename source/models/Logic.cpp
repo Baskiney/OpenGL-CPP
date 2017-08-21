@@ -17,13 +17,11 @@ glm::mat4 MVP;
 
 //Map Logic
 int Blocksize;
-
+int chunkSize;
 
 void initLogic(){
 
-	//Hardcoded 10000
-	Blocksize = 10000;
-
+	int chunkSize = 64;
 	generateMap();
 
 }

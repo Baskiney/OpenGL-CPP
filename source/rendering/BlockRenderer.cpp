@@ -10,19 +10,19 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
-#include <iostream>
 #include "../helpers/BMPloader.h"
 #include "../models/World.h"
 #include "../models/Logic.h"
 #include "shaders/Shader.h"
+#include "TextureLoader.h"
 
 
 
 GLuint VBO;
 GLuint UVB;
 GLuint programID;
-GLuint Texture1;
-GLuint Texture2;
+//GLuint Texture_Grass;
+//GLuint Texture_Bark;
 GLuint TextureID;
 
 
@@ -34,10 +34,8 @@ void __initBlockRenderer(){
 	glBindVertexArray(VertexArrayID);
 
 	programID = LoadShaders();
+	__initTextures();
 
-	// Load the texture using any two methods
-	Texture1 = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\grassblock\\main.bmp");
-	Texture2 = loadBMP("R:\\Dienste\\Eclipse Workspace\\OpenGL\\source\\textures\\tree\\bark.bmp");
 	//GLuint Texture = loadDDS("uvtemplate.DDS");
 
 	// Get a handle for our "myTextureSampler" uniform
@@ -136,33 +134,17 @@ void __initBlockRenderer(){
 	glBindBuffer(GL_ARRAY_BUFFER, UVB);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
 
-
-
-	//Uses Block Data from Logic/World
-	unsigned int instanceVBO;
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(BlockData), &BlockData[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	//3d Attribute Pointer
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glVertexAttribDivisor(2, 1);
-
-	// End Instanced Rendering
-
+	glUseProgram(programID);
+	glActiveTexture(GL_TEXTURE0);
 
 }
 
-void __renderBlocks(){
+void __renderBlock(int type){
 
-		glUseProgram(programID);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture1);
+		// Loads Texture for this block type
+		__loadTexture(type);
+
 		// Set our "myTextureSampler" sampler to use Texture Unit 0
 		glUniform1i(TextureID, 0);
 
@@ -190,7 +172,7 @@ void __renderBlocks(){
 
 
 		// Instances
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 12*3, Blocksize);
+		glDrawArrays(GL_TRIANGLES, 0, 12*3);
 
 		// End-Instances
 
@@ -199,3 +181,36 @@ void __renderBlocks(){
 
 
 }
+
+void __renderBlocks(){
+
+
+	for( unsigned int i = 0; i < sizeof(BlockData)/sizeof(BlockData[0]); i = i + 1 ){
+
+		MVP = ProjectionMatrix * glm::translate(ViewMatrix * ModelMatrix, BlockData[i]);
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+		//Do not render origin at the moment because unassigned world data will be stored there
+		if (BlockData[i] != glm::vec3(0,0,0)){
+			__renderBlock(BlockType[i]);
+		}
+
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
